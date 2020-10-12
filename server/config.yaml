@@ -43,7 +43,7 @@ system:
   db-type: 'mysql'
   oss-type: 'local'
   config-env: 'GVA_CONFIG'
-  need-init-data: true
+  need-init-data: false
   use-multipoint: false
 
 # captcha configuration
