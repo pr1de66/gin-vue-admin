@@ -21,8 +21,6 @@ func Gorm() {
 		GormMysql()
 	case "postgresql":
 		GormPostgreSql()
-	//case "sqlite": // sqlite需要gcc支持 windows用户需要自行安装gcc 如需使用打开注释即可
-	//	GormSqlite()
 	case "sqlserver":
 		GormSqlServer()
 	default:
@@ -84,7 +82,7 @@ func GormMysql() {
 // GormPostgreSql 初始化PostgreSql数据库
 func GormPostgreSql() {
 	p := global.GVA_CONFIG.Postgresql
-	dsn := "host="+ p.Host + " user=" + p.Username + " password=" + p.Password + " dbname=" + p.Dbname + " port=" + p.Port + " " + p.Config
+	dsn := "host=" + p.Host + " user=" + p.Username + " password=" + p.Password + " dbname=" + p.Dbname + " port=" + p.Port + " " + p.Config
 	postgresConfig := postgres.Config{
 		DSN:                  dsn,                    // DSN data source name
 		PreferSimpleProtocol: p.PreferSimpleProtocol, // 禁用隐式 prepared statement
@@ -94,7 +92,9 @@ func GormPostgreSql() {
 		global.GVA_LOG.Error("PostgreSql启动异常", zap.Any("err", err))
 		os.Exit(0)
 	} else {
-		GormDBTables(global.GVA_DB)
+		if global.GVA_CONFIG.System.NeedInitData {
+			GormDBTables(global.GVA_DB)
+		}
 		sqlDB, _ := global.GVA_DB.DB()
 		sqlDB.SetMaxIdleConns(p.MaxIdleConns)
 		sqlDB.SetMaxOpenConns(p.MaxOpenConns)

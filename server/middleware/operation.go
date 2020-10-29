@@ -11,7 +11,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -46,10 +45,10 @@ func OperationRecord() gin.HandlerFunc {
 			Body:   string(body),
 			UserID: userId,
 		}
-		values := c.Request.Header.Values("content-type")
-		if len(values) >0 && strings.Contains(values[0], "boundary") {
-			record.Body = "file"
-		}
+		//values := c.Request.Header.Values("content-type")
+		//if len(values) >0 && strings.Contains(values[0], "boundary") {
+		//	record.Body = "file"
+		//}
 		writer := responseBodyWriter{
 			ResponseWriter: c.Writer,
 			body:           &bytes.Buffer{},
