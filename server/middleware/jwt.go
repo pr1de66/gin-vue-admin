@@ -49,28 +49,30 @@ func JWTAuth() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		if err, _ = service.FindUserByUuid(claims.UUID.String()); err != nil{
+		if err, _ = service.FindUserByUuid(claims.UUID.String()); err != nil {
+			global.GVA_LOG.Info(claims.UUID.String())
+			global.GVA_LOG.Info(err.Error())
 			response.Result(response.ERROR, gin.H{
 				"reload": true,
 			}, err.Error(), c)
 			c.Abort()
 		}
-		if claims.ExpiresAt - time.Now().Unix()<claims.BufferTime {
+		if claims.ExpiresAt-time.Now().Unix() < claims.BufferTime {
 			claims.ExpiresAt = time.Now().Unix() + 60*60*24*7
-			newToken,_ := j.CreateToken(*claims)
-			newClaims,_ := j.ParseToken(newToken)
-			c.Header("new-token",newToken)
-			c.Header("new-expires-at",strconv.FormatInt(newClaims.ExpiresAt,10))
+			newToken, _ := j.CreateToken(*claims)
+			newClaims, _ := j.ParseToken(newToken)
+			c.Header("new-token", newToken)
+			c.Header("new-expires-at", strconv.FormatInt(newClaims.ExpiresAt, 10))
 			if global.GVA_CONFIG.System.UseMultipoint {
-				err,RedisJwtToken := service.GetRedisJWT(newClaims.Username)
-				if err!=nil {
-					global.GVA_LOG.Error("get redis jwt failed",  zap.Any("err", err))
-				}else{
+				err, RedisJwtToken := service.GetRedisJWT(newClaims.Username)
+				if err != nil {
+					global.GVA_LOG.Error("get redis jwt failed", zap.Any("err", err))
+				} else {
 					service.JsonInBlacklist(model.JwtBlacklist{Jwt: RedisJwtToken})
 					//当之前的取成功时才进行拉黑操作
 				}
 				// 无论如何都要记录当前的活跃状态
-				_ = service.SetRedisJWT(newToken,newClaims.Username)
+				_ = service.SetRedisJWT(newToken, newClaims.Username)
 			}
 		}
 		c.Set("claims", claims)

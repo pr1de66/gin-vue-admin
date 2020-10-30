@@ -119,12 +119,12 @@ func GetAllTplFile(pathName string, fileList []string) ([]string, error) {
 }
 
 func GetTables(dbName string) (err error, TableNames []request.TableReq) {
-	err = global.GVA_DB.Raw("select table_name as table_name from information_schema.tables where table_schema = ?", dbName).Scan(&TableNames).Error
+	err = global.GVA_DB.Raw("select tablename as tableName from pg_tables where schemaname = 'yay'").Scan(&TableNames).Error
 	return err, TableNames
 }
 
 func GetDB() (err error, DBNames []request.DBReq) {
-	err = global.GVA_DB.Raw("SELECT SCHEMA_NAME AS `database` FROM INFORMATION_SCHEMA.SCHEMATA;").Scan(&DBNames).Error
+	err = global.GVA_DB.Raw("select pg_database.datname as database from pg_database").Scan(&DBNames).Error
 	return err, DBNames
 }
 

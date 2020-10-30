@@ -49,7 +49,7 @@ func CreateTemp(c *gin.Context) {
 				Method:      "DELETE",
 			},
 			{
-				Path:        "/" + a.Abbreviation + "/" + "delete" + a.StructName+"ByIds",
+				Path:        "/" + a.Abbreviation + "/" + "delete" + a.StructName + "ByIds",
 				Description: "批量删除" + a.Description,
 				ApiGroup:    a.Abbreviation,
 				Method:      "DELETE",
@@ -107,7 +107,7 @@ func GetTables(c *gin.Context) {
 	dbName := c.DefaultQuery("dbName", global.GVA_CONFIG.Mysql.Dbname)
 	err, tables := service.GetTables(dbName)
 	if err != nil {
-		response.FailWithMessage(fmt.Sprintf("查询table失败，%v", err), c)
+		response.FailWithMessage(fmt.Sprintf("查询table失败,method:%v,%v", "GetTables", err), c)
 	} else {
 		response.OkWithData(gin.H{
 			"tables": tables,
@@ -125,7 +125,7 @@ func GetTables(c *gin.Context) {
 func GetDB(c *gin.Context) {
 	err, dbs := service.GetDB()
 	if err != nil {
-		response.FailWithMessage(fmt.Sprintf("查询table失败，%v", err), c)
+		response.FailWithMessage(fmt.Sprintf("查询table失败,method:%v,%v", "GetDB", err), c)
 	} else {
 		response.OkWithData(gin.H{
 			"dbs": dbs,
@@ -145,7 +145,7 @@ func GetColume(c *gin.Context) {
 	tableName := c.Query("tableName")
 	err, columes := service.GetColume(tableName, dbName)
 	if err != nil {
-		response.FailWithMessage(fmt.Sprintf("查询table失败，%v", err), c)
+		response.FailWithMessage(fmt.Sprintf("查询table失败,method:%v,%v", "GetColume", err), c)
 	} else {
 		response.OkWithData(gin.H{
 			"columes": columes,

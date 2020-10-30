@@ -1,6 +1,7 @@
 package response
 
 import (
+	"gin-vue-admin/global"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -46,6 +47,7 @@ func Fail(c *gin.Context) {
 }
 
 func FailWithMessage(message string, c *gin.Context) {
+	global.GVA_LOG.Info(message)
 	Result(ERROR, map[string]interface{}{}, message, c)
 }
 

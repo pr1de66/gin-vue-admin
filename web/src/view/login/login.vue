@@ -3,12 +3,12 @@
     <div class="container">
       <div class="top">
         <div class="desc">
-          <img class="logo_login" src="@/assets/logo_login.png" alt="" />
+          <img class="logo_login" src="@/assets/logo_tantan.png" alt="" />
         </div>
         <div class="header">
           <a href="/">
             <!-- <img src="~@/assets/logo.png" class="logo" alt="logo" /> -->
-            <span class="title">Gin-Vue-Admin</span>
+            <span class="title">KPI-Admin</span>
           </a>
         </div>
       </div>
@@ -42,7 +42,7 @@
               ></i>
             </el-input>
           </el-form-item>
-          <el-form-item style="position:relative">
+          <!--<el-form-item style="position:relative">
             <el-input
               v-model="loginForm.captcha"
               name="logVerify"
@@ -59,7 +59,7 @@
                 @click="loginVefify()"
               />
             </div>
-          </el-form-item>
+          </el-form-item>-->
           <el-form-item>
             <el-button type="primary" @click="submitForm" style="width:100%"
               >登 录</el-button
@@ -68,7 +68,7 @@
         </el-form>
       </div>
 
-      <div class="footer">
+      <!--div class="footer">
         <div class="links">
           <a href="http://doc.henrongyi.top/"
             ><img src="@/assets/docs.png" class="link-icon"
@@ -86,7 +86,7 @@
         <div class="copyright">
           Copyright &copy; {{ curYear }} 💖flipped-aurora
         </div>
-      </div>
+      </div-->
     </div>
   </div>
 </template>

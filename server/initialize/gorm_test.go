@@ -6,6 +6,9 @@ import (
 	"gin-vue-admin/global"
 	"gin-vue-admin/gva/init_data"
 	"gin-vue-admin/model"
+	"gin-vue-admin/utils"
+
+	//"gin-vue-admin/utils"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"testing"
@@ -40,35 +43,34 @@ func TestGormPostgreSql(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-
+	global.GVA_DB = db
 	var res Result
 	db.Raw("select count(1) from audit_log").Scan(&res)
 	fmt.Println(res.Cnt)
 
-	err = db.AutoMigrate(
-		model.SysUser{},
-		model.SysAuthority{},
-		model.SysApi{},
-		model.SysBaseMenu{},
-		model.SysBaseMenuParameter{},
-		model.JwtBlacklist{},
-		model.SysWorkflow{},
-		model.SysWorkflowStepInfo{},
-		model.SysDictionary{},
-		model.SysDictionaryDetail{},
-		model.ExaFileUploadAndDownload{},
-		model.ExaFile{},
-		model.ExaFileChunk{},
-		model.ExaSimpleUploader{},
-		model.ExaCustomer{},
-		model.SysOperationRecord{},
-	)
-	if err != nil {
-		panic(err)
-	}
+	//err = db.AutoMigrate(
+	//	model.SysUser{},
+	//	model.SysAuthority{},
+	//	model.SysApi{},
+	//	model.SysBaseMenu{},
+	//	model.SysBaseMenuParameter{},
+	//	model.JwtBlacklist{},
+	//	model.SysWorkflow{},
+	//	model.SysWorkflowStepInfo{},
+	//	model.SysDictionary{},
+	//	model.SysDictionaryDetail{},
+	//	model.ExaFileUploadAndDownload{},
+	//	model.ExaFile{},
+	//	model.ExaFileChunk{},
+	//	model.ExaSimpleUploader{},
+	//	model.ExaCustomer{},
+	//	model.SysOperationRecord{},
+	//)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
 
-	global.GVA_DB = db
-	err = init_data.InitSysApi()
 	err = init_data.InitSysApi()
 	err = init_data.InitSysUser()
 	err = init_data.InitExaCustomer()
@@ -81,8 +83,31 @@ func TestGormPostgreSql(t *testing.T) {
 	err = init_data.InitSysDataAuthorityId()
 	err = init_data.InitSysDictionaryDetail()
 	err = init_data.InitExaFileUploadAndDownload()
+	//if err != nil {
+	//	panic(err)
+	//}
+
+	u := model.SysUser{
+		Username: "admin",
+		Password: "123456",
+	}
+	u.Password = utils.MD5V([]byte(u.Password))
+	//global.GVA_LOG.Info(u.Username)
+	//global.GVA_LOG.Info(u.Password)
+	err = global.GVA_DB.Where("username = ? AND password = ?", u.Username, u.Password).Preload("Authority").First(&u).Error
+
 	if err != nil {
+
 		panic(err)
+	}
+
+	fmt.Println(u)
+
+
+	if err = global.GVA_DB.Where("uuid = ?", u.UUID).First(&u).Error; err != nil {
+		fmt.Println(err.Error())
+		fmt.Println(u)
+
 	}
 
 }

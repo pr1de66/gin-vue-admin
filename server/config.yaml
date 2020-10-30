@@ -24,13 +24,13 @@ redis:
 
 # email configuration
 email:
-  to: 'xxx@qq.com'
-  port: 465
-  from: 'xxx@163.com'
-  host: 'smtp.163.com'
-  is-ssl: true
-  secret: 'xxx'
-  nickname: 'test'
+  to: 'xueyin@p1.com'
+  port: 25
+  from: 'antispam.common@p1.com'
+  host: 'smtp.p1.com'
+  is-ssl: false
+  secret: 'IRy1pbAShK0tFsRH'
+  nickname: 'xueyin'
 
 # casbin configuration
 casbin:
@@ -39,7 +39,7 @@ casbin:
 # system configuration
 system:
   env: 'public'  # Change to "develop" to skip authentication for development mode
-  addr: 8881
+  addr: 8888
   db-type: 'postgresql'
   oss-type: 'local'
   config-env: 'GVA_CONFIG'
@@ -52,39 +52,11 @@ captcha:
   img-width: 240
   img-height: 80
 
-# mysql connect configuration
-mysql:
-  path: '127.0.0.1:3306'
-  config: 'charset=utf8mb4&parseTime=True&loc=Local'
-  db-name: 'qmPlus'
-  username: 'root'
-  password: 'Aa@6447985'
-  max-idle-conns: 10
-  max-open-conns: 10
-  log-mode: false
-
-# sqlite connect configuration (sqlite需要gcc支持 windows用户需要自行安装gcc)
-sqlite:
-  path: 'db.db'
-  max-idle-conns: 10
-  max-open-conns: 10
-  logger: true
-
-# Sqlserver connect configuration
-sqlserver:
-  path: 'localhost:9930'
-  db-name: 'gorm'
-  username: 'gorm'
-  password: 'LoremIpsum86'
-  max-idle-conns: 10
-  max-open-conns: 10
-  logger: true
-
 # Postgresql connect configuration
 postgresql:
   host: '10.180.8.52'
   port: '5432'
-  config: 'sslmode=disable TimeZone=Asia/Shanghai'
+  config: 'sslmode=disable TimeZone=Asia/Shanghai client_encoding=UTF8'
   db-name: 'putong-moderationlog'
   username: 'putong'
   password: '123456'

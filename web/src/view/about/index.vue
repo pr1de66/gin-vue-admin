@@ -44,7 +44,7 @@
           </div>
         </el-card>
         <el-card style="margin-top: 20px">
-          <div slot="header">flipped-aurora团队</div>
+          <div slot="header">Antispam团队</div>
           <div>
             <el-row>
               <el-col :span="8" :offset="8">
