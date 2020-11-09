@@ -16,7 +16,7 @@ var err error
 
 // Gorm 初始化数据库并产生数据库全局变量
 func Gorm() {
-	switch global.GVA_CONFIG.System.DbType {
+	switch global.CONFIG.System.DbType {
 	case "mysql":
 		GormMysql()
 	case "postgresql":
@@ -49,15 +49,15 @@ func GormDBTables(db *gorm.DB) {
 		model.SysOperationRecord{},
 	)
 	if err != nil {
-		global.GVA_LOG.Error("register table failed", zap.Any("err", err))
+		global.LOG.Error("register table failed", zap.Any("err", err))
 		os.Exit(0)
 	}
-	global.GVA_LOG.Info("register table success")
+	global.LOG.Info("register table success")
 }
 
 // GormMysql 初始化Mysql数据库
 func GormMysql() {
-	m := global.GVA_CONFIG.Mysql
+	m := global.CONFIG.Mysql
 	dsn := m.Username + ":" + m.Password + "@tcp(" + m.Path + ")/" + m.Dbname + "?" + m.Config
 	mysqlConfig := mysql.Config{
 		DSN:                       dsn,   // DSN data source name
@@ -68,12 +68,12 @@ func GormMysql() {
 		SkipInitializeWithVersion: false, // 根据版本自动配置
 	}
 	gormConfig := config(m.LogMode)
-	if global.GVA_DB, err = gorm.Open(mysql.New(mysqlConfig), gormConfig); err != nil {
-		global.GVA_LOG.Error("MySQL启动异常", zap.Any("err", err))
+	if global.DB, err = gorm.Open(mysql.New(mysqlConfig), gormConfig); err != nil {
+		global.LOG.Error("MySQL启动异常", zap.Any("err", err))
 		os.Exit(0)
 	} else {
-		GormDBTables(global.GVA_DB)
-		sqlDB, _ := global.GVA_DB.DB()
+		GormDBTables(global.DB)
+		sqlDB, _ := global.DB.DB()
 		sqlDB.SetMaxIdleConns(m.MaxIdleConns)
 		sqlDB.SetMaxOpenConns(m.MaxOpenConns)
 	}
@@ -81,21 +81,21 @@ func GormMysql() {
 
 // GormPostgreSql 初始化PostgreSql数据库
 func GormPostgreSql() {
-	p := global.GVA_CONFIG.Postgresql
+	p := global.CONFIG.Postgresql
 	dsn := "host=" + p.Host + " user=" + p.Username + " password=" + p.Password + " dbname=" + p.Dbname + " port=" + p.Port + " " + p.Config
 	postgresConfig := postgres.Config{
 		DSN:                  dsn,                    // DSN data source name
 		PreferSimpleProtocol: p.PreferSimpleProtocol, // 禁用隐式 prepared statement
 	}
 	gormConfig := config(p.Logger)
-	if global.GVA_DB, err = gorm.Open(postgres.New(postgresConfig), gormConfig); err != nil {
-		global.GVA_LOG.Error("PostgreSql启动异常", zap.Any("err", err))
+	if global.DB, err = gorm.Open(postgres.New(postgresConfig), gormConfig); err != nil {
+		global.LOG.Error("PostgreSql启动异常", zap.Any("err", err))
 		os.Exit(0)
 	} else {
-		if global.GVA_CONFIG.System.NeedInitData {
-			GormDBTables(global.GVA_DB)
+		if global.CONFIG.System.NeedInitData {
+			GormDBTables(global.DB)
 		}
-		sqlDB, _ := global.GVA_DB.DB()
+		sqlDB, _ := global.DB.DB()
 		sqlDB.SetMaxIdleConns(p.MaxIdleConns)
 		sqlDB.SetMaxOpenConns(p.MaxOpenConns)
 	}
@@ -103,14 +103,14 @@ func GormPostgreSql() {
 
 // GormSqlite 初始化Sqlite数据库 sqlite需要gcc支持 windows用户需要自行安装gcc 如需使用打开注释即可
 //func GormSqlite() {
-//	s := global.GVA_CONFIG.Sqlite
+//	s := global.CONFIG.Sqlite
 //	gormConfig := config(s.Logger)
-//	if global.GVA_DB, err = gorm.Open(sqlite.Open(s.Path), gormConfig); err != nil {
-//		global.GVA_LOG.Error("Sqlite启动异常", zap.Any("err", err))
+//	if global.DB, err = gorm.Open(sqlite.Open(s.Path), gormConfig); err != nil {
+//		global.LOG.Error("Sqlite启动异常", zap.Any("err", err))
 //		os.Exit(0)
 //	} else {
-//      GormDBTables(global.GVA_DB)
-//		sqlDB, _ := global.GVA_DB.DB()
+//      GormDBTables(global.DB)
+//		sqlDB, _ := global.DB.DB()
 //		sqlDB.SetMaxIdleConns(s.MaxIdleConns)
 //		sqlDB.SetMaxOpenConns(s.MaxOpenConns)
 //	}
@@ -118,14 +118,14 @@ func GormPostgreSql() {
 
 // GormSqlServer 初始化SqlServer数据库
 func GormSqlServer() {
-	ss := global.GVA_CONFIG.Sqlserver
+	ss := global.CONFIG.Sqlserver
 	dsn := "sqlserver://" + ss.Username + ":" + ss.Password + "@" + ss.Path + "?database=gorm"
-	if global.GVA_DB, err = gorm.Open(sqlserver.Open(dsn), &gorm.Config{}); err != nil {
-		global.GVA_LOG.Error("SqlServer启动异常", zap.Any("err", err))
+	if global.DB, err = gorm.Open(sqlserver.Open(dsn), &gorm.Config{}); err != nil {
+		global.LOG.Error("SqlServer启动异常", zap.Any("err", err))
 		os.Exit(0)
 	} else {
-		GormDBTables(global.GVA_DB)
-		sqlDB, _ := global.GVA_DB.DB()
+		GormDBTables(global.DB)
+		sqlDB, _ := global.DB.DB()
 		sqlDB.SetMaxIdleConns(ss.MaxIdleConns)
 		sqlDB.SetMaxOpenConns(ss.MaxOpenConns)
 	}

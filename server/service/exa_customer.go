@@ -13,7 +13,7 @@ import (
 // @return    err             error
 
 func CreateExaCustomer(e model.ExaCustomer) (err error) {
-	err = global.GVA_DB.Create(&e).Error
+	err = global.DB.Create(&e).Error
 	return err
 }
 
@@ -24,7 +24,7 @@ func CreateExaCustomer(e model.ExaCustomer) (err error) {
 // @return                    error
 
 func DeleteExaCustomer(e model.ExaCustomer) (err error) {
-	err = global.GVA_DB.Delete(e).Error
+	err = global.DB.Delete(e).Error
 	return err
 }
 
@@ -35,7 +35,7 @@ func DeleteExaCustomer(e model.ExaCustomer) (err error) {
 // @return                    error
 
 func UpdateExaCustomer(e *model.ExaCustomer) (err error) {
-	err = global.GVA_DB.Save(e).Error
+	err = global.DB.Save(e).Error
 	return err
 }
 
@@ -47,7 +47,7 @@ func UpdateExaCustomer(e *model.ExaCustomer) (err error) {
 // @return    customer        ExaCustomer
 
 func GetExaCustomer(id uint) (err error, customer model.ExaCustomer) {
-	err = global.GVA_DB.Where("id = ?", id).First(&customer).Error
+	err = global.DB.Where("id = ?", id).First(&customer).Error
 	return
 }
 
@@ -61,7 +61,7 @@ func GetExaCustomer(id uint) (err error, customer model.ExaCustomer) {
 func GetCustomerInfoList(sysUserAuthorityID string, info request.PageInfo) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-	db := global.GVA_DB.Model(&model.ExaCustomer{})
+	db := global.DB.Model(&model.ExaCustomer{})
 	var a model.SysAuthority
 	a.AuthorityId = sysUserAuthorityID
 	err, auth := GetAuthorityInfo(a)

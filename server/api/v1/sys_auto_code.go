@@ -5,6 +5,7 @@ import (
 	"gin-vue-admin/global"
 	"gin-vue-admin/global/response"
 	"gin-vue-admin/model"
+	"gin-vue-admin/model/request"
 	"gin-vue-admin/service"
 	"gin-vue-admin/utils"
 	"github.com/gin-gonic/gin"
@@ -104,8 +105,13 @@ func CreateTemp(c *gin.Context) {
 // @Router /autoCode/getTables [get]
 
 func GetTables(c *gin.Context) {
-	dbName := c.DefaultQuery("dbName", global.GVA_CONFIG.Mysql.Dbname)
+
+	dbName := c.DefaultQuery("dbName", global.CONFIG.Postgresql.Dbname)
 	err, tables := service.GetTables(dbName)
+	for _, table := range tables {
+		global.LOG.Info(table.TableName)
+
+	}
 	if err != nil {
 		response.FailWithMessage(fmt.Sprintf("查询table失败,method:%v,%v", "GetTables", err), c)
 	} else {
@@ -123,14 +129,19 @@ func GetTables(c *gin.Context) {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"创建成功"}"
 // @Router /autoCode/getDatabase [get]
 func GetDB(c *gin.Context) {
-	err, dbs := service.GetDB()
-	if err != nil {
-		response.FailWithMessage(fmt.Sprintf("查询table失败,method:%v,%v", "GetDB", err), c)
-	} else {
-		response.OkWithData(gin.H{
-			"dbs": dbs,
-		}, c)
+	dbs := []request.DBReq{
+		{
+			Database: global.CONFIG.Postgresql.Dbname,
+		},
 	}
+	//err, dbs := service.GetDB()
+	//if err != nil {
+	//	response.FailWithMessage(fmt.Sprintf("查询table失败,method:%v,%v", "GetDB", err), c)
+	//} else {
+	//}
+	response.OkWithData(gin.H{
+		"dbs": dbs,
+	}, c)
 }
 
 // @Tags SysApi
@@ -141,7 +152,7 @@ func GetDB(c *gin.Context) {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"创建成功"}"
 // @Router /autoCode/getDatabase [get]
 func GetColume(c *gin.Context) {
-	dbName := c.DefaultQuery("dbName", global.GVA_CONFIG.Mysql.Dbname)
+	dbName := c.DefaultQuery("dbName", global.CONFIG.Mysql.Dbname)
 	tableName := c.Query("tableName")
 	err, columes := service.GetColume(tableName, dbName)
 	if err != nil {

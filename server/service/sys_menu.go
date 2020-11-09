@@ -17,8 +17,8 @@ import (
 func getMenuTreeMap(authorityId string) (err error, treeMap map[string][]model.SysMenu) {
 	var allMenus []model.SysMenu
 	treeMap = make(map[string][]model.SysMenu)
-	global.GVA_LOG.Info(authorityId)
-	err = global.GVA_DB.Where("authority_id = ?", authorityId).Order("sort").Preload("Parameters").Find(&allMenus).Error
+	global.LOG.Info(authorityId)
+	err = global.DB.Where("authority_id = ?", authorityId).Order("sort").Preload("Parameters").Find(&allMenus).Error
 	for _, v := range allMenus {
 		treeMap[v.ParentId] = append(treeMap[v.ParentId], v)
 	}
@@ -96,10 +96,10 @@ func getBaseChildrenList(menu *model.SysBaseMenu, treeMap map[string][]model.Sys
 // 增加基础路由
 
 func AddBaseMenu(menu model.SysBaseMenu) (err error) {
-	if !errors.Is(global.GVA_DB.Where("name = ?", menu.Name).First(&model.SysBaseMenu{}).Error, gorm.ErrRecordNotFound) {
+	if !errors.Is(global.DB.Where("name = ?", menu.Name).First(&model.SysBaseMenu{}).Error, gorm.ErrRecordNotFound) {
 		err = errors.New("存在重复name，请修改name")
 	}
-	err = global.GVA_DB.Create(&menu).Error
+	err = global.DB.Create(&menu).Error
 	return err
 }
 
@@ -112,7 +112,7 @@ func AddBaseMenu(menu model.SysBaseMenu) (err error) {
 func getBaseMenuTreeMap() (err error, treeMap map[string][]model.SysBaseMenu) {
 	var allMenus []model.SysBaseMenu
 	treeMap = make(map[string][]model.SysBaseMenu)
-	err = global.GVA_DB.Order("sort").Preload("Parameters").Find(&allMenus).Error
+	err = global.DB.Order("sort").Preload("Parameters").Find(&allMenus).Error
 	for _, v := range allMenus {
 		treeMap[v.ParentId] = append(treeMap[v.ParentId], v)
 	}
@@ -158,7 +158,7 @@ func AddMenuAuthority(menus []model.SysBaseMenu, authorityId string) (err error)
 
 func GetMenuAuthority(authorityId string) (err error, menus []model.SysMenu) {
 	//sql := "SELECT authority_menu.keep_alive,authority_menu.default_menu,authority_menu.created_at,authority_menu.updated_at,authority_menu.deleted_at,authority_menu.menu_level,authority_menu.parent_id,authority_menu.path,authority_menu.`name`,authority_menu.hidden,authority_menu.component,authority_menu.title,authority_menu.icon,authority_menu.sort,authority_menu.menu_id,authority_menu.authority_id FROM authority_menu WHERE authority_menu.authority_id = ? ORDER BY authority_menu.sort ASC"
-	err = global.GVA_DB.Where("authority_id = ? ", authorityId).Order("sort").Find(&menus).Error
-	//err = global.GVA_DB.Raw(sql, authorityId).Scan(&menus).Error
+	err = global.DB.Where("authority_id = ? ", authorityId).Order("sort").Find(&menus).Error
+	//err = global.DB.Raw(sql, authorityId).Scan(&menus).Error
 	return err, menus
 }

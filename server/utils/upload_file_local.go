@@ -20,11 +20,11 @@ func UploadFileLocal(file *multipart.FileHeader) (err error, localPath string, k
 	// 拼接新文件名
 	lastName := fileName + "_" + time.Now().Format("20060102150405") + ext
 	// 读取全局变量的定义路径
-	savePath := global.GVA_CONFIG.Local.Path
+	savePath := global.CONFIG.Local.Path
 	// 尝试创建此路径
 	err = os.MkdirAll(savePath, os.ModePerm)
 	if err != nil {
-		global.GVA_LOG.Error("upload local file fail:", zap.Any("err", err))
+		global.LOG.Error("upload local file fail:", zap.Any("err", err))
 		return err, "", ""
 	}
 	// 拼接路径和文件名
@@ -33,21 +33,21 @@ func UploadFileLocal(file *multipart.FileHeader) (err error, localPath string, k
 	// 打开文件 defer 关闭
 	src, err := file.Open()
 	if err != nil {
-		global.GVA_LOG.Error("upload local file fail:", zap.Any("err", err))
+		global.LOG.Error("upload local file fail:", zap.Any("err", err))
 		return err, "", ""
 	}
 	defer src.Close()
 	// 创建文件 defer 关闭
 	out, err := os.Create(dst)
 	if err != nil {
-		global.GVA_LOG.Error("upload local file fail:", zap.Any("err", err))
+		global.LOG.Error("upload local file fail:", zap.Any("err", err))
 		return err, "", ""
 	}
 	defer out.Close()
 	// 传输（拷贝）文件
 	_, err = io.Copy(out, src)
 	if err != nil {
-		global.GVA_LOG.Error("upload local file fail:", zap.Any("err", err))
+		global.LOG.Error("upload local file fail:", zap.Any("err", err))
 		return err, "", ""
 	}
 	return nil, dst, lastName

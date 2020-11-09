@@ -14,13 +14,13 @@ import (
 // @return    err             error
 
 func DeleteBaseMenu(id float64) (err error) {
-	err = global.GVA_DB.Preload("Parameters").Where("parent_id = ?", id).First(&model.SysBaseMenu{}).Error
+	err = global.DB.Preload("Parameters").Where("parent_id = ?", id).First(&model.SysBaseMenu{}).Error
 	if err != nil {
 		var menu model.SysBaseMenu
-		db := global.GVA_DB.Preload("SysAuthoritys").Where("id = ?", id).First(&menu).Delete(&menu)
-		err = global.GVA_DB.Delete(&model.SysBaseMenuParameter{}, "sys_base_menu_id = ?", id).Error
+		db := global.DB.Preload("SysAuthoritys").Where("id = ?", id).First(&menu).Delete(&menu)
+		err = global.DB.Delete(&model.SysBaseMenuParameter{}, "sys_base_menu_id = ?", id).Error
 		if len(menu.SysAuthoritys) > 0 {
-			err = global.GVA_DB.Model(&menu).Association("SysAuthoritys").Delete(&menu.SysAuthoritys)
+			err = global.DB.Model(&menu).Association("SysAuthoritys").Delete(&menu.SysAuthoritys)
 		} else {
 			err = db.Error
 		}
@@ -50,14 +50,14 @@ func UpdateBaseMenu(menu model.SysBaseMenu) (err error) {
 	upDateMap["icon"] = menu.Icon
 	upDateMap["sort"] = menu.Sort
 
-	db := global.GVA_DB.Where("id = ?", menu.ID).Find(&oldMenu)
+	db := global.DB.Where("id = ?", menu.ID).Find(&oldMenu)
 	if oldMenu.Name != menu.Name {
-		if !errors.Is(global.GVA_DB.Where("id <> ? AND name = ?", menu.ID, menu.Name).First(&model.SysBaseMenu{}).Error, gorm.ErrRecordNotFound) {
-			global.GVA_LOG.Debug("存在相同name修改失败")
+		if !errors.Is(global.DB.Where("id <> ? AND name = ?", menu.ID, menu.Name).First(&model.SysBaseMenu{}).Error, gorm.ErrRecordNotFound) {
+			global.LOG.Debug("存在相同name修改失败")
 			return errors.New("存在相同name修改失败")
 		}
 	}
-	err = global.GVA_DB.Delete(&model.SysBaseMenuParameter{}, "sys_base_menu_id = ?", menu.ID).Error
+	err = global.DB.Delete(&model.SysBaseMenuParameter{}, "sys_base_menu_id = ?", menu.ID).Error
 	err = db.Updates(upDateMap).Error
 	return err
 }
@@ -69,6 +69,6 @@ func UpdateBaseMenu(menu model.SysBaseMenu) (err error) {
 // @return    err             error
 
 func GetBaseMenuById(id float64) (err error, menu model.SysBaseMenu) {
-	err = global.GVA_DB.Preload("Parameters").Where("id = ?", id).First(&menu).Error
+	err = global.DB.Preload("Parameters").Where("id = ?", id).First(&menu).Error
 	return
 }

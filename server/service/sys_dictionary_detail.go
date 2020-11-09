@@ -13,7 +13,7 @@ import (
 // @return    err             error
 
 func CreateSysDictionaryDetail(sysDictionaryDetail model.SysDictionaryDetail) (err error) {
-	err = global.GVA_DB.Create(&sysDictionaryDetail).Error
+	err = global.DB.Create(&sysDictionaryDetail).Error
 	return err
 }
 
@@ -24,7 +24,7 @@ func CreateSysDictionaryDetail(sysDictionaryDetail model.SysDictionaryDetail) (e
 // @return                    error
 
 func DeleteSysDictionaryDetail(sysDictionaryDetail model.SysDictionaryDetail) (err error) {
-	err = global.GVA_DB.Delete(sysDictionaryDetail).Error
+	err = global.DB.Delete(sysDictionaryDetail).Error
 	return err
 }
 
@@ -35,7 +35,7 @@ func DeleteSysDictionaryDetail(sysDictionaryDetail model.SysDictionaryDetail) (e
 // @return                    error
 
 func UpdateSysDictionaryDetail(sysDictionaryDetail *model.SysDictionaryDetail) (err error) {
-	err = global.GVA_DB.Save(sysDictionaryDetail).Error
+	err = global.DB.Save(sysDictionaryDetail).Error
 	return err
 }
 
@@ -47,7 +47,7 @@ func UpdateSysDictionaryDetail(sysDictionaryDetail *model.SysDictionaryDetail) (
 // @return    SysDictionaryDetail        SysDictionaryDetail
 
 func GetSysDictionaryDetail(id uint) (err error, sysDictionaryDetail model.SysDictionaryDetail) {
-	err = global.GVA_DB.Where("id = ?", id).First(&sysDictionaryDetail).Error
+	err = global.DB.Where("id = ?", id).First(&sysDictionaryDetail).Error
 	return
 }
 
@@ -61,7 +61,7 @@ func GetSysDictionaryDetailInfoList(info request.SysDictionaryDetailSearch) (err
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	// 创建db
-	db := global.GVA_DB.Model(&model.SysDictionaryDetail{})
+	db := global.DB.Model(&model.SysDictionaryDetail{})
 	var sysDictionaryDetails []model.SysDictionaryDetail
 	// 如果有条件搜索 下方会自动创建搜索语句
 	if info.Label != "" {

@@ -43,7 +43,7 @@ func TestGormPostgreSql(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	global.GVA_DB = db
+	global.DB = db
 	var res Result
 	db.Raw("select count(1) from audit_log").Scan(&res)
 	fmt.Println(res.Cnt)
@@ -92,9 +92,9 @@ func TestGormPostgreSql(t *testing.T) {
 		Password: "123456",
 	}
 	u.Password = utils.MD5V([]byte(u.Password))
-	//global.GVA_LOG.Info(u.Username)
-	//global.GVA_LOG.Info(u.Password)
-	err = global.GVA_DB.Where("username = ? AND password = ?", u.Username, u.Password).Preload("Authority").First(&u).Error
+	//global.LOG.Info(u.Username)
+	//global.LOG.Info(u.Password)
+	err = global.DB.Where("username = ? AND password = ?", u.Username, u.Password).Preload("Authority").First(&u).Error
 
 	if err != nil {
 
@@ -104,7 +104,7 @@ func TestGormPostgreSql(t *testing.T) {
 	fmt.Println(u)
 
 
-	if err = global.GVA_DB.Where("uuid = ?", u.UUID).First(&u).Error; err != nil {
+	if err = global.DB.Where("uuid = ?", u.UUID).First(&u).Error; err != nil {
 		fmt.Println(err.Error())
 		fmt.Println(u)
 

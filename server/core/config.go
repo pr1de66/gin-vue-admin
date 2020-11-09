@@ -18,7 +18,7 @@ func init() {
 	flag.StringVar(&config, "c", "", "choose config file.")
 	flag.Parse()
 	if config == "" { // 优先级: 命令行 > 环境变量 > 默认值
-		if configEnv := os.Getenv(global.GVA_CONFIG.System.ConfigEnv); configEnv == "" {
+		if configEnv := os.Getenv(global.CONFIG.System.ConfigEnv); configEnv == "" {
 			config = defaultConfigFile
 			fmt.Printf("您正在使用config的默认值,config的路径为%v\n", defaultConfigFile)
 		} else {
@@ -38,12 +38,12 @@ func init() {
 
 	v.OnConfigChange(func(e fsnotify.Event) {
 		fmt.Println("config file changed:", e.Name)
-		if err := v.Unmarshal(&global.GVA_CONFIG); err != nil {
+		if err := v.Unmarshal(&global.CONFIG); err != nil {
 			fmt.Println(err)
 		}
 	})
-	if err := v.Unmarshal(&global.GVA_CONFIG); err != nil {
+	if err := v.Unmarshal(&global.CONFIG); err != nil {
 		fmt.Println(err)
 	}
-	global.GVA_VP = v
+	global.VP = v
 }

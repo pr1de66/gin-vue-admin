@@ -21,7 +21,7 @@ type SysDataAuthorityId struct {
 }
 
 func InitSysApi() (err error) {
-	tx := global.GVA_DB.Begin() // 开始事务
+	tx := global.DB.Begin() // 开始事务
 	insert := []model.SysApi{
 		{gorm.Model{ID: 1, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/base/login", "用户登录", "base", "POST"},
 		{gorm.Model{ID: 2, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/base/register", "用户注册", "base", "POST"},
@@ -97,7 +97,7 @@ func InitSysApi() (err error) {
 }
 
 func InitSysUser() (err error) {
-	tx := global.GVA_DB.Begin() // 开始事务
+	tx := global.DB.Begin() // 开始事务
 	insert := []model.SysUser{
 		{Model: gorm.Model{ID: 1, CreatedAt: time.Now(), UpdatedAt: time.Now()}, UUID: uuid.NewV4(), Username: "admin", Password: "e10adc3949ba59abbe56e057f20f883e", NickName: "超级管理员", HeaderImg: "http://qmplusimg.henrongyi.top/1571627762timg.jpg", AuthorityId: "888"},
 		{Model: gorm.Model{ID: 2, CreatedAt: time.Now(), UpdatedAt: time.Now()}, UUID: uuid.NewV4(), Username: "a303176530", Password: "3ec063004a6f31642261936a379fde3d", NickName: "QMPlusUser", HeaderImg: "http://qmplusimg.henrongyi.top/1572075907logo.png", AuthorityId: "9528"},
@@ -109,7 +109,7 @@ func InitSysUser() (err error) {
 }
 
 func InitExaCustomer() (err error) {
-	tx := global.GVA_DB.Begin() // 开始事务
+	tx := global.DB.Begin() // 开始事务
 	insert := []model.ExaCustomer{
 		{Model: gorm.Model{ID: 1, CreatedAt: time.Now(), UpdatedAt: time.Now()}, CustomerName: "测试客户", CustomerPhoneData: "1761111111", SysUserID: 1, SysUserAuthorityID: "888"},
 	}
@@ -120,12 +120,12 @@ func InitExaCustomer() (err error) {
 }
 
 func InitCasbinModel() (err error) {
-	if !global.GVA_DB.Migrator().HasTable("casbin_rule") {
-		if err := global.GVA_DB.Migrator().CreateTable(&gormadapter.CasbinRule{}); err != nil {
+	if !global.DB.Migrator().HasTable("casbin_rule") {
+		if err := global.DB.Migrator().CreateTable(&gormadapter.CasbinRule{}); err != nil {
 			return err
 		}
 	}
-	tx := global.GVA_DB.Begin() // 开始事务
+	tx := global.DB.Begin() // 开始事务
 	insert := []model.CasbinModel{
 		{"p", "888", "/base/login", "POST"},
 		{"p", "888", "/base/register", "POST"},
@@ -274,7 +274,7 @@ func InitCasbinModel() (err error) {
 }
 
 func InitSysAuthority() (err error) {
-	tx := global.GVA_DB.Begin() // 开始事务
+	tx := global.DB.Begin() // 开始事务
 	insert := []model.SysAuthority{
 		{CreatedAt: time.Now(), UpdatedAt: time.Now(), AuthorityId: "888", AuthorityName: "普通用户", ParentId: "0"},
 		{CreatedAt: time.Now(), UpdatedAt: time.Now(), AuthorityId: "8881", AuthorityName: "普通用户子角色", ParentId: "888"},
@@ -287,7 +287,7 @@ func InitSysAuthority() (err error) {
 }
 
 func InitSysBaseMenus() (err error) {
-	tx := global.GVA_DB.Begin() // 开始事务
+	tx := global.DB.Begin() // 开始事务
 	insert := []model.SysBaseMenu{
 		{Model: gorm.Model{ID: 1, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, ParentId: "0", Path: "dashboard", Name: "dashboard", Hidden: false, Component: "view/dashboard/index.vue", Sort: 1, Meta: model.Meta{Title: "仪表盘", Icon: "setting"}},
 		{Model: gorm.Model{ID: 2, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, Hidden: false, ParentId: "0", Path: "about", Name: "about", Component: "view/about/index.vue", Sort: 7, Meta: model.Meta{Title: "关于我们", Icon: "info"}},
@@ -324,13 +324,13 @@ func InitSysBaseMenus() (err error) {
 }
 
 func InitAuthorityMenu() (err error) {
-	return global.GVA_DB.Exec("CREATE OR REPLACE VIEW authority_menu AS select b.id,b.created_at,b.updated_at,b.deleted_at, b.menu_level,b.parent_id,b.path,b.name,b.hidden,b.component, b.title,b.icon,b.sort,a.sys_authority_authority_id AS authority_id,a.sys_base_menu_id AS menu_id,b.keep_alive,b.default_menu from sys_authority_menus a join sys_base_menus b on a.sys_base_menu_id = b.id;").Error
+	return global.DB.Exec("CREATE OR REPLACE VIEW authority_menu AS select b.id,b.created_at,b.updated_at,b.deleted_at, b.menu_level,b.parent_id,b.path,b.name,b.hidden,b.component, b.title,b.icon,b.sort,a.sys_authority_authority_id AS authority_id,a.sys_base_menu_id AS menu_id,b.keep_alive,b.default_menu from sys_authority_menus a join sys_base_menus b on a.sys_base_menu_id = b.id;").Error
 }
 
 func InitSysDictionary() (err error) {
 	status := new(bool)
 	*status = true
-	tx := global.GVA_DB.Begin() // 开始事务
+	tx := global.DB.Begin() // 开始事务
 	insert := []model.SysDictionary{
 		{Model: gorm.Model{ID: 1, CreatedAt: time.Now(), UpdatedAt: time.Now()}, Name: "性别", Type: "sex", Status: status, Desc: "性别字典"},
 		{Model: gorm.Model{ID: 2, CreatedAt: time.Now(), UpdatedAt: time.Now()}, Name: "数据库int类型", Type: "int", Status: status, Desc: "int类型对应的数据库类型"},
@@ -346,7 +346,7 @@ func InitSysDictionary() (err error) {
 }
 
 func InitSysAuthorityMenus() (err error) {
-	tx := global.GVA_DB.Begin() // 开始事务
+	tx := global.DB.Begin() // 开始事务
 	insert := []SysAuthorityMenus{
 		{"888", 1},
 		{"888", 2},
@@ -409,7 +409,7 @@ func InitSysAuthorityMenus() (err error) {
 }
 
 func InitSysDataAuthorityId() (err error) {
-	tx := global.GVA_DB.Begin() // 开始事务
+	tx := global.DB.Begin() // 开始事务
 	insert := []SysDataAuthorityId{
 		{"888", "888"},
 		{"888", "8881"},
@@ -417,7 +417,7 @@ func InitSysDataAuthorityId() (err error) {
 		{"9528", "8881"},
 		{"9528", "9528"},
 	}
-	if global.GVA_DB.Migrator().HasTable("sys_data_authority_ids") {
+	if global.DB.Migrator().HasTable("sys_data_authority_ids") {
 		if tx.Table("sys_data_authority_ids").Create(&insert).Error != nil { // 遇到错误时回滚事务
 			tx.Rollback()
 		}
@@ -432,7 +432,7 @@ func InitSysDataAuthorityId() (err error) {
 func InitSysDictionaryDetail() (err error) {
 	status := new(bool)
 	*status = true
-	tx := global.GVA_DB.Begin() // 开始事务
+	tx := global.DB.Begin() // 开始事务
 	insert := []model.SysDictionaryDetail{
 		{gorm.Model{ID: 1, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "smallint", 1, status, 1, 2},
 		{gorm.Model{ID: 2, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "mediumint", 2, status, 2, 2},
@@ -465,7 +465,7 @@ func InitSysDictionaryDetail() (err error) {
 }
 
 func InitExaFileUploadAndDownload() (err error) {
-	tx := global.GVA_DB.Begin() // 开始事务
+	tx := global.DB.Begin() // 开始事务
 	insert := []model.ExaFileUploadAndDownload{
 		{gorm.Model{ID: 1, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "10.png", "http://qmplusimg.henrongyi.top/gvalogo.png", "png", "158787308910.png"},
 		{gorm.Model{ID: 2, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "logo.png", "http://qmplusimg.henrongyi.top/1576554439myAvatar.png", "png", "1587973709logo.png"},
@@ -491,7 +491,7 @@ func InitData() {
 	err = InitSysDictionaryDetail()
 	err = InitExaFileUploadAndDownload()
 	if err != nil {
-		global.GVA_LOG.Error("initialize data failed", zap.Any("err", err))
+		global.LOG.Error("initialize data failed", zap.Any("err", err))
 	}
-	global.GVA_LOG.Info("initialize data success")
+	global.LOG.Info("initialize data success")
 }

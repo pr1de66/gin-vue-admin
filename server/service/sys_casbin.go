@@ -49,7 +49,7 @@ func UpdateCasbin(authorityId string, casbinInfos []request.CasbinInfo) error {
 // @return                     error
 
 func UpdateCasbinApi(oldPath string, newPath string, oldMethod string, newMethod string) error {
-	err := global.GVA_DB.Table("casbin_rule").Model(&model.CasbinModel{}).Where("v1 = ? AND v2 = ?", oldPath, oldMethod).Updates(map[string]interface{}{
+	err := global.DB.Table("casbin_rule").Model(&model.CasbinModel{}).Where("v1 = ? AND v2 = ?", oldPath, oldMethod).Updates(map[string]interface{}{
 		"v1": newPath,
 		"v2": newMethod,
 	}).Error
@@ -93,9 +93,9 @@ func ClearCasbin(v int, p ...string) bool {
 // @auth                     （2020/04/05  20:22）
 
 func Casbin() *casbin.Enforcer {
-	admin := global.GVA_CONFIG.Postgresql
-	a, _ := gormadapter.NewAdapter(global.GVA_CONFIG.System.DbType, admin.Username+":"+admin.Password+"@("+admin.Host+")/"+admin.Dbname, true)
-	e, _ := casbin.NewEnforcer(global.GVA_CONFIG.Casbin.ModelPath, a)
+	admin := global.CONFIG.Postgresql
+	a, _ := gormadapter.NewAdapter(global.CONFIG.System.DbType, admin.Username+":"+admin.Password+"@("+admin.Host+")/"+admin.Dbname, true)
+	e, _ := casbin.NewEnforcer(global.CONFIG.Casbin.ModelPath, a)
 	e.AddFunction("ParamsMatch", ParamsMatchFunc)
 	_ = e.LoadPolicy()
 	return e

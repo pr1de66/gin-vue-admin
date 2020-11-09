@@ -23,13 +23,13 @@ func FindOrCreateFile(fileMd5 string, fileName string, chunkTotal int) (err erro
 	cfile.FileName = fileName
 	cfile.ChunkTotal = chunkTotal
 
-	if errors.Is(global.GVA_DB.Where("file_md5 = ? AND is_finish = ?", fileMd5, true).First(&file).Error, gorm.ErrRecordNotFound) {
-		err = global.GVA_DB.Where("file_md5 = ? AND file_name = ?", fileMd5, fileName).Preload("ExaFileChunk").FirstOrCreate(&file, cfile).Error
+	if errors.Is(global.DB.Where("file_md5 = ? AND is_finish = ?", fileMd5, true).First(&file).Error, gorm.ErrRecordNotFound) {
+		err = global.DB.Where("file_md5 = ? AND file_name = ?", fileMd5, fileName).Preload("ExaFileChunk").FirstOrCreate(&file, cfile).Error
 		return err, file
 	}
 	cfile.IsFinish = true
 	cfile.FilePath = file.FilePath
-	err = global.GVA_DB.Create(&cfile).Error
+	err = global.DB.Create(&cfile).Error
 	return err, cfile
 }
 
@@ -46,7 +46,7 @@ func CreateFileChunk(id uint, fileChunkPath string, fileChunkNumber int) error {
 	chunk.FileChunkPath = fileChunkPath
 	chunk.ExaFileID = id
 	chunk.FileChunkNumber = fileChunkNumber
-	err := global.GVA_DB.Create(&chunk).Error
+	err := global.DB.Create(&chunk).Error
 	return err
 }
 
@@ -61,7 +61,7 @@ func CreateFileChunk(id uint, fileChunkPath string, fileChunkNumber int) error {
 func DeleteFileChunk(fileMd5 string, fileName string, filePath string) error {
 	var chunks []model.ExaFileChunk
 	var file model.ExaFile
-	err := global.GVA_DB.Where("file_md5 = ? AND file_name = ?", fileMd5, fileName).First(&file).Update("IsFinish", true).Update("file_path", filePath).Error
-	err = global.GVA_DB.Where("exa_file_id = ?", file.ID).Delete(&chunks).Unscoped().Error
+	err := global.DB.Where("file_md5 = ? AND file_name = ?", fileMd5, fileName).First(&file).Update("IsFinish", true).Update("file_path", filePath).Error
+	err = global.DB.Where("exa_file_id = ?", file.ID).Delete(&chunks).Unscoped().Error
 	return err
 }

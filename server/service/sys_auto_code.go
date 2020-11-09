@@ -119,16 +119,16 @@ func GetAllTplFile(pathName string, fileList []string) ([]string, error) {
 }
 
 func GetTables(dbName string) (err error, TableNames []request.TableReq) {
-	err = global.GVA_DB.Raw("select tablename as tableName from pg_tables where schemaname = 'yay'").Scan(&TableNames).Error
+	err = global.DB.Raw("select tablename as tableName from pg_tables where schemaname = 'yay' order by 1").Scan(&TableNames).Error
 	return err, TableNames
 }
 
 func GetDB() (err error, DBNames []request.DBReq) {
-	err = global.GVA_DB.Raw("select pg_database.datname as database from pg_database").Scan(&DBNames).Error
+	err = global.DB.Raw("select datname as database from pg_database").Scan(&DBNames).Error
 	return err, DBNames
 }
 
 func GetColume(tableName string, dbName string) (err error, Columes []request.ColumeReq) {
-	err = global.GVA_DB.Raw("SELECT COLUMN_NAME colume_name,DATA_TYPE data_type,CASE DATA_TYPE WHEN 'longtext' THEN c.CHARACTER_MAXIMUM_LENGTH WHEN 'varchar' THEN c.CHARACTER_MAXIMUM_LENGTH WHEN 'double' THEN CONCAT_WS( ',', c.NUMERIC_PRECISION, c.NUMERIC_SCALE ) WHEN 'decimal' THEN CONCAT_WS( ',', c.NUMERIC_PRECISION, c.NUMERIC_SCALE ) WHEN 'int' THEN c.NUMERIC_PRECISION WHEN 'bigint' THEN c.NUMERIC_PRECISION ELSE '' END AS data_type_long,COLUMN_COMMENT colume_comment FROM INFORMATION_SCHEMA.COLUMNS c WHERE table_name = ? AND table_schema = ?", tableName, dbName).Scan(&Columes).Error
+	err = global.DB.Raw("SELECT COLUMN_NAME colume_name,DATA_TYPE data_type,CASE DATA_TYPE WHEN 'longtext' THEN c.CHARACTER_MAXIMUM_LENGTH WHEN 'varchar' THEN c.CHARACTER_MAXIMUM_LENGTH WHEN 'double' THEN CONCAT_WS( ',', c.NUMERIC_PRECISION, c.NUMERIC_SCALE ) WHEN 'decimal' THEN CONCAT_WS( ',', c.NUMERIC_PRECISION, c.NUMERIC_SCALE ) WHEN 'int' THEN c.NUMERIC_PRECISION WHEN 'bigint' THEN c.NUMERIC_PRECISION ELSE '' END AS data_type_long,COLUMN_COMMENT colume_comment FROM INFORMATION_SCHEMA.COLUMNS c WHERE table_name = ? AND table_schema = ?", tableName, dbName).Scan(&Columes).Error
 	return err, Columes
 }

@@ -13,13 +13,13 @@ import (
 
 // 保存文件切片路径
 func SaveChunk(uploader model.ExaSimpleUploader) (err error) {
-	return global.GVA_DB.Create(uploader).Error
+	return global.DB.Create(uploader).Error
 }
 
 // 检查文件是否已经上传过
 func CheckFileMd5(md5 string) (err error, uploads []model.ExaSimpleUploader, isDone bool) {
-	err = global.GVA_DB.Find(&uploads, "identifier = ? AND is_done = ?", md5, false).Error
-	isDone = errors.Is(global.GVA_DB.First(&model.ExaSimpleUploader{}, "identifier = ? AND is_done = ?", md5, true).Error, gorm.ErrRecordNotFound)
+	err = global.DB.Find(&uploads, "identifier = ? AND is_done = ?", md5, false).Error
+	isDone = errors.Is(global.DB.First(&model.ExaSimpleUploader{}, "identifier = ? AND is_done = ?", md5, true).Error, gorm.ErrRecordNotFound)
 	return err, uploads, !isDone
 }
 
@@ -28,7 +28,7 @@ func MergeFileMd5(md5 string, fileName string) (err error) {
 	finishDir := "./finish/"
 	dir := "./chunk/" + md5
 	//如果文件上传成功 不做后续操作 通知成功即可
-	if !errors.Is(global.GVA_DB.First(&model.ExaSimpleUploader{}, "identifier = ? AND is_done = ?", md5, true).Error, gorm.ErrRecordNotFound) {
+	if !errors.Is(global.DB.First(&model.ExaSimpleUploader{}, "identifier = ? AND is_done = ?", md5, true).Error, gorm.ErrRecordNotFound) {
 		return nil
 	}
 
@@ -52,7 +52,7 @@ func MergeFileMd5(md5 string, fileName string) (err error) {
 		return err
 	}
 	//创建事务
-	tx := global.GVA_DB.Begin()
+	tx := global.DB.Begin()
 	//删除切片信息
 	err = tx.Delete(&model.ExaSimpleUploader{}, "identifier = ? AND is_done = ?", md5, false).Error
 	// 添加文件信息
